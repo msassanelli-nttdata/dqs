@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RuleSetDefinition",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "version": { "type": "string" },
+    "rule_sets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["id", "name", "description"]
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "rule_set": { "type": "string" },
+          "level": { "type": "string", "enum": ["INFO", "WARNING", "ERROR"] },
+          "score_weight": { "type": "string" },
+          "sql_regex_check": {
+            "type": "object",
+            "properties": {
+              "table": { "type": "string" },
+              "column": { "type": "string" },
+              "regex": { "type": "string" }
+            },
+            "required": ["table", "column", "regex"]
+          },
+          "sql_check": {
+            "type": "object",
+            "properties": {
+              "statement": { "type": "string" }
+            },
+            "required": ["statement"]
+          },
+          "sql_valuecheck": {
+            "type": "object",
+            "properties": {
+              "table": { "type": "string" },
+              "where": { "type": "string" }
+            },
+            "required": ["table", "where"]
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "value": { "type": "string" }
+            },
+            "required": ["name", "value"]
+          },
+          "message": { "type": "string" },
+          "follow_up_actions": { "type": "string" },
+          "execution": {
+            "type": "object",
+            "properties": {
+              "max_rows": { "type": "integer" }
+            },
+            "required": ["max_rows"]
+          }
+        },
+        "required": ["id", "name", "description", "rule_set", "level", "score_weight", "context", "message", "execution"]
+      }
+    }
+  },
+  "required": ["id", "name", "description", "rule_sets", "rules"]
+}
