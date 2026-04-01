@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "DuplicateFinding": {
+      "properties": {
+        "type": {
+          "const": "DuplicateFinding",
+          "default": "DuplicateFinding",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "DuplicateFinding",
+      "type": "object"
+    },
+    "Level": {
+      "enum": [
+        "INFO",
+        "WARNING",
+        "ERROR"
+      ],
+      "title": "Level",
+      "type": "string"
+    },
+    "Rule": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/Level"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "dq_dimension": {
+          "title": "Dq Dimension",
+          "type": "string"
+        },
+        "rule_impl": {
+          "discriminator": {
+            "mapping": {
+              "DuplicateFinding": "#/$defs/DuplicateFinding",
+              "SQLRule": "#/$defs/SQLRule"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/SQLRule"
+            },
+            {
+              "$ref": "#/$defs/DuplicateFinding"
+            }
+          ],
+          "title": "Rule Impl"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "level",
+        "message",
+        "dq_dimension",
+        "rule_impl"
+      ],
+      "title": "Rule",
+      "type": "object"
+    },
+    "RuleSet": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "rule_list": {
+          "items": {
+            "$ref": "#/$defs/Rule"
+          },
+          "title": "Rule List",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "rule_list"
+      ],
+      "title": "RuleSet",
+      "type": "object"
+    },
+    "SQLRule": {
+      "properties": {
+        "type": {
+          "const": "SQLRule",
+          "default": "SQLRule",
+          "title": "Type",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "limit": {
+          "default": 1000,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "statement"
+      ],
+      "title": "SQLRule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "rule_set_list": {
+      "items": {
+        "$ref": "#/$defs/RuleSet"
+      },
+      "title": "Rule Set List",
+      "type": "array"
+    },
+    "version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Version"
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "rule_set_list"
+  ],
+  "title": "RunEngine",
+  "type": "object"
+}
