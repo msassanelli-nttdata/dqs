@@ -1,15 +1,52 @@
 {
   "$defs": {
-    "DuplicateFinding": {
+    "DuplicateCheck": {
       "properties": {
         "type": {
-          "const": "DuplicateFinding",
-          "default": "DuplicateFinding",
+          "const": "DuplicateCheck",
+          "default": "DuplicateCheck",
           "title": "Type",
           "type": "string"
+        },
+        "group_columns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Group Columns",
+          "type": "array"
+        },
+        "nomenclature": {
+          "additionalProperties": true,
+          "title": "Nomenclature",
+          "type": "object"
+        },
+        "max_candidates_block_size": {
+          "default": 5000,
+          "title": "Max Candidates Block Size",
+          "type": "integer"
+        },
+        "min_string_matching": {
+          "default": 0.85,
+          "title": "Min String Matching",
+          "type": "number"
+        },
+        "custom_columns_similarity_mapping": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Custom Columns Similarity Mapping",
+          "type": "object"
+        },
+        "min_similarity_matching": {
+          "default": 0.85,
+          "title": "Min Similarity Matching",
+          "type": "number"
         }
       },
-      "title": "DuplicateFinding",
+      "required": [
+        "group_columns"
+      ],
+      "title": "DuplicateCheck",
       "type": "object"
     },
     "Level": {
@@ -25,6 +62,7 @@
       "additionalProperties": false,
       "properties": {
         "id": {
+          "pattern": "^[A-Za-z0-9_-]+$",
           "title": "Id",
           "type": "string"
         },
@@ -39,18 +77,26 @@
         "level": {
           "$ref": "#/$defs/Level"
         },
-        "message": {
-          "title": "Message",
-          "type": "string"
-        },
         "dq_dimension": {
           "title": "Dq Dimension",
+          "type": "string"
+        },
+        "sap_table_name": {
+          "title": "Sap Table Name",
+          "type": "string"
+        },
+        "sap_column_name": {
+          "title": "Sap Column Name",
+          "type": "string"
+        },
+        "rule_tag": {
+          "title": "Rule Tag",
           "type": "string"
         },
         "rule_impl": {
           "discriminator": {
             "mapping": {
-              "DuplicateFinding": "#/$defs/DuplicateFinding",
+              "DuplicateCheck": "#/$defs/DuplicateCheck",
               "SQLRule": "#/$defs/SQLRule"
             },
             "propertyName": "type"
@@ -60,19 +106,26 @@
               "$ref": "#/$defs/SQLRule"
             },
             {
-              "$ref": "#/$defs/DuplicateFinding"
+              "$ref": "#/$defs/DuplicateCheck"
             }
           ],
           "title": "Rule Impl"
+        },
+        "source_table": {
+          "title": "Source Table",
+          "type": "string"
         }
       },
       "required": [
         "name",
         "description",
         "level",
-        "message",
         "dq_dimension",
-        "rule_impl"
+        "sap_table_name",
+        "sap_column_name",
+        "rule_tag",
+        "rule_impl",
+        "source_table"
       ],
       "title": "Rule",
       "type": "object"
@@ -81,6 +134,7 @@
       "additionalProperties": false,
       "properties": {
         "id": {
+          "pattern": "^[A-Za-z0-9_-]+$",
           "title": "Id",
           "type": "string"
         },
@@ -120,22 +174,57 @@
           "title": "Statement",
           "type": "string"
         },
-        "limit": {
-          "default": 1000,
-          "title": "Limit",
-          "type": "integer"
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "context": {
+          "title": "Context",
+          "type": "string"
         }
       },
       "required": [
-        "statement"
+        "statement",
+        "message",
+        "context"
       ],
       "title": "SQLRule",
+      "type": "object"
+    },
+    "SQLView": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "view_statement": {
+          "title": "View Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "view_statement"
+      ],
+      "title": "SQLView",
       "type": "object"
     }
   },
   "additionalProperties": false,
   "properties": {
     "id": {
+      "pattern": "^[A-Za-z0-9_-]+$",
       "title": "Id",
       "type": "string"
     },
@@ -154,6 +243,13 @@
       "title": "Rule Set List",
       "type": "array"
     },
+    "sql_view_list": {
+      "items": {
+        "$ref": "#/$defs/SQLView"
+      },
+      "title": "Sql View List",
+      "type": "array"
+    },
     "version": {
       "anyOf": [
         {
@@ -170,7 +266,8 @@
   "required": [
     "name",
     "description",
-    "rule_set_list"
+    "rule_set_list",
+    "sql_view_list"
   ],
   "title": "RunEngine",
   "type": "object"
